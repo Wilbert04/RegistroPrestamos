@@ -16,7 +16,7 @@ namespace Prestamos.DAL
 
             protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             {
-                optionsBuilder.UseSqlite(@"Data Source=Data\PrestamoDB.db");
+                optionsBuilder.UseSqlite(@"Data Source=Data\PrestamoDB1.db");
             }
 
         }

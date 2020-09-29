@@ -1,0 +1,176 @@
+﻿@page "/Prestamos"
+@page "/Prestamos/{PrestamoId:int}"
+
+@using Prestamos.Models
+@using Prestamos.BLL
+
+@using Blazored.Toast
+@using Blazored.Toast.Services
+
+@inject IToastService Toast
+
+<EditForm Model="prestamos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Registro de Prestamos</h3>
+        </div>
+
+        <div class="card-body">
+            <form>
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>PrestamoId:</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="prestamos.PrestamoId" class="form-control col-4" />
+                                <ValidationMessage For="(() => prestamos.PrestamoId)"></ValidationMessage>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary input-group-text" @onclick="Buscar">Buscar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*Fecha*@
+                <div class="form-group">
+                    <label>Fecha:</label>
+                    <InputDate @bind-Value="prestamos.Fecha" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.Fecha)" />
+                </div>
+
+                @*Persona*@
+                <div class="form-group">
+                    <label for="persona_select">PersonaId:</label>
+                    <select id="persona_select" @bind="prestamos.PersonaId" class="form-control">
+                        <option value="" disabled selected>Elija una Persona</option>
+                        @foreach (var item in listPersona)
+                        {
+                            <option value="@item.PersonaId">@item.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                @*Concepto*@
+                <div class="form-group">
+                    <label>Concepto:</label>
+                    <InputText @bind-Value="prestamos.Concepto" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.Concepto)" />
+                </div>
+
+                @*Monto*@
+                <div class="form-group">
+                    <label>Monto:</label>
+                    <InputNumber @bind-Value="prestamos.Monto" @oninput="ObtenerBalance" @onfocusin="ObtenerBalance" @onfocusout="ObtenerBalance" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.Monto)" />
+                </div>
+                @*Balance*@
+                <div class="form-group">
+                    <label>Balance:</label>
+                    <InputNumber @bind-Value="prestamos.Balance" readonly="true" class="form-control" />
+                    <ValidationMessage For="@(() => prestamos.Balance)" />
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button" class="btn btn-lg btn-secondary" @onclick="Nuevo">Nuevo</button>
+                <button type="submit" class="btn btn-lg btn-success">Guardar</button>
+                <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">Eliminar</button>
+            </div>
+        </div>
+
+    </div>
+
+</EditForm>
+
+
+
+@code {
+
+    [Parameter]
+    public int PrestamoId { get; set; }  
+    Prestamoss prestamos = new Prestamoss();
+
+    private List<Personas> listPersona = new List<Personas>();
+    
+
+    protected override void OnInitialized()
+    {
+
+        Nuevo();
+        Buscar();
+        listPersona = PersonasBLL.GetList(p => true);
+    }
+
+    private void Nuevo()
+    {
+        this.prestamos = new Prestamoss();
+
+    }
+
+    private void Buscar()
+    {
+
+        if (prestamos.PrestamoId != 0)
+        {
+            var encontrado = PrestamosBLL.Buscar(prestamos.PrestamoId);
+
+            if (encontrado != null)
+            {
+                this.prestamos = encontrado;
+            }
+            else
+            {
+                Toast.ShowWarning("NO ENCONTRADO");
+            }
+        }
+
+    }
+
+    private void Guardar()
+    {
+        bool paso;
+
+        paso = PrestamosBLL.Guardar(prestamos);
+
+        if (paso)
+        {
+            Toast.ShowSuccess("GUARDADO");
+            Nuevo();
+
+        }
+        else
+        {
+            Toast.ShowError("NO SE PUDO GUARDAR");
+        }
+
+
+    }
+
+    private void Eliminar()
+    {
+        bool paso;
+
+        paso = PrestamosBLL.Eliminar(prestamos.PrestamoId);
+
+        if (paso)
+        {
+            Nuevo();
+            Toast.ShowWarning("ELIMINADO");
+        }
+        else
+        {
+            Toast.ShowError("NO SE PUDO ELIMINAR");
+        }
+    }
+
+    private void ObtenerBalance()
+    {
+
+        prestamos.Balance = prestamos.Monto;
+
+    }
+}
