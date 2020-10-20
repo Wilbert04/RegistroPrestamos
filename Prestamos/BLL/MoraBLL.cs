@@ -11,13 +11,11 @@ namespace Prestamos.BLL
 {
     public class MoraBLL
     {
-        public class MoraBLL
-        {
-
-            public static bool Guardar(Mora moras)
+       
+            public static bool Guardar(Mora mora)
             {
-                if (!Existe(moras.MoraId))
-                    return Insertar(moras);
+                if (!Existe(mora.MoraId))
+                    return Insertar(mora);
 
                 else
                     return Modificar(mora);
@@ -232,4 +230,5 @@ namespace Prestamos.BLL
                 return lista;
             }
         }
-}
+    }
+

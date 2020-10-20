@@ -13,7 +13,7 @@ namespace Prestamos.Models
         public int MoraId { get; set; }
 
         [Required(ErrorMessage = "DEBE INGRESAR UN PRESTMAO")]
-        public int PretamoId { get; set; }
+        public int PrestamoId { get; set; }
         public decimal Total { get; set; }
         public DateTime Fecha { get; set; }
 

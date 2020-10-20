@@ -130,22 +130,26 @@ namespace Prestamos.BLL
             return prestamos;
         }
 
-        public static List<Prestamoss> GetList(Expression<Func<Prestamoss, bool>> criterio)
+        public List<Mora> GetList(Expression<Func<Mora, bool>> expression)
         {
-            List<Prestamoss> lista = new List<Prestamoss>();
+
+            List<Mora> lista = new List<Mora>();
             Contexto db = new Contexto();
+
+
             try
             {
-                lista = db.Prestamoss.Where(criterio).ToList();
+                lista = db.mora.Where(expression).ToList();
             }
             catch (Exception)
             {
-
                 throw;
+
             }
             finally
             {
                 db.Dispose();
+
             }
 
             return lista;
